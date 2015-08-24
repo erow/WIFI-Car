@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>遥控小车</title>
+    <link rel="stylesheet" href="css/style.css" />
+	<link rel="stylesheet" href="css/bootstrap.css" />
+    <script type="text/javascript">
+    	function helloworld(){
+			alert("hello world!")
+		}
+   		document.addEventListener('plusready', function(){
+   			njsAlertForAndroid();
+   		});
+
+   		var origin;
+   		var size,parent;
+   		function Drag(id) {
+        var $ = function (flag) {
+            return document.getElementById(flag);
+        }
+        	that=$(id);
+        	$(id).parentElement.style.height=$(id).parentElement.offsetWidth+"px";
+        	var rect=$(id).parentElement.getBoundingClientRect();
+            origin={x:(rect.right+rect.left)/2,y:(rect.top+rect.bottom)/2};
+            size=rect.height/2;
+            $(id).style.left = origin.x -15+ "px";
+            $(id).style.top = origin.y -15+ "px";
+        /*$(id).onmousedown = function (e) {
+            var d = document;
+            var  that=this;
+            
+            var page = {
+                event: function (evt) {
+                    var ev = evt || window.event;
+                    return ev;
+                },
+                pageX: function (evt) {
+                    var e = this.event(evt);
+                   // console.log("e.clientX"+e.clientX+",y:"+y);
+                    return  (e.clientX  );
+                    
+                },
+                pageY: function (evt) {
+                    var e = this.event(evt);
+                 //   console.log("e.clientY"+e.clientY+",p.scrollTop:"+document.body.scrollTop);
+                    return  (e.clientY  );
+ 
+                },
+                layerX: function (evt) {
+                    var e = this.event(evt);
+                    return  e.offsetX;
+                },
+                layerY: function (evt) {
+                    var e = this.event(evt);
+                    return  e.offsetY;
+                }
+            }            
+            var x = page.layerX(e);
+            var y = page.layerY(e);   
+            //鼠标在元素内的相对坐标
+            if (that.setCapture) {
+                that.setCapture();
+            }
+            else if (window.captureEvents) {
+                window.captureEvents(Event.MOUSEMOVE | Event.MOUSEUP);
+            }
+            d.onmousemove = function (e) {                   
+                var tx = page.pageX(e) - x;
+                var ty = page.pageY(e) - y;
+                cx=tx+15-origin.x;
+                cy= +origin.y-(document.body.scrollTop+ty+y);
+                if(cx*cx+cy*cy>size*size)
+                {
+                	console.log("cx:"+cx+"cy:"+(ty+y));
+                	return;
+                }
+                that.style.left = tx + "px";
+                that.style.top = ty + "px";
+                
+            }
+            d.onmouseup = function () {
+                if (that.releaseCapture) {
+                    that.releaseCapture();
+                }
+                else if (window.releaseEvents) {
+                    window.releaseEvents(Event.MOUSEMOVE | Event.MOUSEUP);
+                }
+                d.onmousemove = null;
+                d.onmouseup = null;
+            }*/
+        }
+       // $(id).ontouchstart=touch;
+    
+   		     
+        var d = document;
+        var that;
+        var startX ,startY;
+   		function touch(evt) {
+      
+	             try {
+	        //evt.preventDefault(); //阻止触摸时浏览器的缩放、滚动条滚动等
+	 
+	        var touch = evt.touches[0]; //获取第一个触点
+	        var x = Number(touch.pageX); //页面触点X坐标
+	        var y = Number(touch.pageY); //页面触点Y坐标
+	        //记录触点初始位置
+	        startX = x;
+	        startY = y;
+	 
+	 
+	    } catch (e) {
+	        alert('touchSatrtFunc：' + e.message);
+	    }
+		}
+            
+        
+   		function touchmove(e) {
+   			//var p=window.event(e);
+   		 	var touch = e.touches[0]; //获取第一个触点
+        	var x = Number(touch.pageX); //页面触点X坐标
+        	var y = Number(touch.pageY); //页面触点Y坐标 
+        	
+                var tx =that.offsetLeft -(startX  - x);
+                var ty =that.offsetTop-(startY  - y);
+                cx=tx+15-origin.x;
+                cy=ty+15-origin.y;
+                //console.log("dx:"+(startX  - x)+"dy:"+(startY  - y),"tx:"+tx);
+                var t=cx*cx+cy*cy;
+                if(t>size*size)
+                {
+                	//console.log("cx:"+tx+"cy:"+ty);
+                	//return;
+                	t=Math.sqrt(t)
+                	cx=cx*size/t;
+                	cy=cy*size/t;
+                }
+                
+                that.style.left = cx-15+origin.x + "px";
+                that.style.top = cy-15 +origin.y+ "px";
+                startX=x;startY=y;
+                
+                writeMSG(cx,cy);
+                
+            }
+            function touchend() {
+                if (that.releaseCapture) {
+                    that.releaseCapture();
+                }
+                else if (window.releaseEvents) {
+                    window.releaseEvents(Event.MOUSEMOVE | Event.MOUSEUP);
+                }
+                send=true;
+                var touch = e.touches[0]; //获取第一个触点
+	        	var x = Number(touch.pageX); //页面触点X坐标
+	        	var y = Number(touch.pageY); //页面触点Y坐标 
+        	
+                var tx =that.offsetLeft -(startX  - x);
+                var ty =that.offsetTop-(startY  - y);
+                cx=tx+15-origin.x;
+                cy=ty+15-origin.y;
+                //console.log("dx:"+(startX  - x)+"dy:"+(startY  - y),"tx:"+tx);
+                var t=cx*cx+cy*cy;
+                if(t>size*size)
+                {
+                	//console.log("cx:"+tx+"cy:"+ty);
+                	//return;
+                	t=Math.sqrt(t)
+                	cx=cx*size/t;
+                	cy=cy*size/t;
+                }
+                
+                that.style.left = tx + "px";
+                that.style.top = ty + "px";
+                startX=x;startY=y;
+                
+                writeMSG(cx,cy);
+                d.ontouchend = null;
+                d.ontouchstart = null;
+         } 
+    </script>
+</head>
+<body class="container">
+	<div class=" bs-example">
+	<form class="form-horizontal" style="padding-right: 15px;">
+	  <div class="form-group " >
+	    <div class="col-xs-8">
+	      <input id ="ip" type="text" class="form-control"  placeholder="IP:" value="192.168.4.1">
+	    </div>  
+	    <div id="switch" class="col-xs-4 btn btn-default " onclick="switchTCP()">连接</div>
+	    
+	  </div>
+	  
+	</form>
+	<div class="highlight col-xs-12" id="msg" style="height: 100px;float: none;"> 
+		none;	
+	  </div>
+	</div>
+	
+	<div id="footer" class="bs-end">
+	<div style="width: 100%;height: 100%;background-color: #EE33EE;border-radius: 500px;">
+	<div style="width: 30px;height: 30px;border-radius:50px;background-color: #ff0000;position: fixed;" id="orig"></div>
+	</div>
+	</div>
+<script>
+	var footer=document.getElementById("footer");
+	//footer.style.height=footer.offsetWidth+10+"px";
+	Drag("orig");
+	
+	function touchEndFunc(evt) {
+    try {
+        //evt.preventDefault(); //阻止触摸时浏览器的缩放、滚动条滚动等
+ 
+ 
+    } catch (e) {
+        alert('touchEndFunc：' + e.message);
+    }
+}
+ 
+//绑定事件
+	function bindEvent() {
+		parent=document.body.children[1];
+	    parent.addEventListener('touchstart', touch, false);
+	    parent.addEventListener('touchmove', touchmove, false);
+	    parent.addEventListener('touchend', touchend, false);
+	}
+	bindEvent();
+ 
+//判断是否支持触摸事件
+	function isTouchDevice() {
+	    //document.getElementById("version").innerHTML = navigator.appVersion;
+	 
+	    try {
+	        document.createEvent("TouchEvent");
+	        //alert("支持TouchEvent事件！");
+	 
+	        bindEvent(); //绑定事件
+	    } catch (e) {
+	        alert("不支持TouchEvent事件！" + e.message);
+	    }
+	}
+	//isTouchDevice();
+	var socket,out,br;
+	var msg=document.getElementById("msg");
+	
+		function TCPserver()
+		{
+			var ServerSocket=plus.android.importClass("java.net.ServerSocket");
+			var inputStream =  plus.android.importClass("java.io.InputStream");
+			//plus.android.
+			serverSocket = new ServerSocket(1989);  
+        // 调用ServerSocket的accept()方法，接受客户端所发送的请求，  
+        // 如果客户端没有发送数据，那么该线程就停滞不继续  
+        printname(1,plus.android.java); 
+        var socket = serverSocket.accept();  
+         
+        
+        // 从Socket当中得到InputStream对象  
+         
+         printname(1,socket); 
+         msg.innerText+=(socket.plusCallMethod);
+         inputStream=socket.plusCallMethod("getInputStream"); 
+         printname(1,inputStream); 
+         serverSocket.close(); 
+        var temp = 0;  
+        // 从InputStream当中读取客户端所发送的数据  
+        while ((temp = inputStream.read(buffer)) != -1) {  
+           msg.innerHTML+=temp;  
+        }  
+      
+		}
+		var send=false;
+	function switchTCP()
+	{
+		var Switch=document.getElementById("switch");
+		var timer;
+		if(socket&&socket.isConnected())
+			{
+				closeTCP();
+				Switch.innerHTML="连接";
+				if(timer)
+				clearInterval(timer);
+				timer=null;
+			}
+		else
+		{
+			openTCP();
+			timer=setInterval(function(){
+			send=true;/*msg.innerText=br.readLine();*/},500);
+		}
+	} 	
+	
+
+	function openTCP(){
+    if (plus.os.name == "Android") {
+        var Socket = plus.android.importClass("java.net.Socket");
+        var PrintWriter = plus.android.importClass("java.io.PrintWriter");
+        var BufferedWriter = plus.android.importClass("java.io.BufferedWriter");
+		var OutputStreamWriter = plus.android.importClass("java.io.OutputStreamWriter");
+        var BufferedReader = plus.android.importClass("java.io.BufferedReader");
+        var InputStreamReader = plus.android.importClass("java.io.InputStreamReader");
+        
+        socket = new Socket(document.getElementById("ip").value, 500);
+        if(socket.isConnected())
+        {
+        	var Switch=document.getElementById("switch");
+        	Switch.innerHTML="断开";
+        }
+        else{
+		msg.innerText="连接失败";
+		return;
+		}
+        var outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
+		msg.innerHTML+="1";
+        var bufferWriter = new BufferedWriter(outputStreamWriter);
+         out = new PrintWriter(bufferWriter, true);
+         
+         //out.print("asd");out.flush();
+         send=true;
+        writeMSG(1,95);
+        var inputStreamReader = new InputStreamReader(socket.getInputStream());
+          br = new BufferedReader(inputStreamReader);
+        //var msg = br.readLine();
+        //alert("read:"+msg);
+        
+    }
+}
+	var resul;
+	function writeMSG(x,y)
+	{
+		if(send&&socket&&socket.isConnected())
+		{
+		send=false;
+		
+		y=-y;
+		var l=Math.sqrt(x*x+y*y)/size;
+		if(l<=0.3)
+		{
+			var sum=new Array(1,1,1, 1,1,1, 1);
+			
+			resul="";
+			for(var i=0;i<7;i++)
+				resul+=String.fromCharCode((sum[i]));
+			//fromCharCode(128)由于是非assic所有会变成2个字节。所有要拆开。
+			//console.log(sum); 
+			out.print("mm"+resul); 
+			out.flush();
+			return;
+		}
+		var a=Math.atan2(y,x);
+		var sl,sr;
+		if(a>=Math.PI/2)
+		{
+			sr=1;
+			sl=1-4*((a-Math.PI/2)/Math.PI);
+		}else if(a>=0)
+		{
+			sl=1;
+			sr=-1+4*(a/Math.PI)
+		}else if(a<=-Math.PI/2)
+		{
+			sl=-1;
+			sr=-1-(a+Math.PI/2)/Math.PI*4;
+		}
+		else
+		{
+			sr=-1;
+			sl=1+4*(a/Math.PI);
+		}  
+		var sum=new Array(7);
+		if(sl>=0) sum[0]=2; else sum[0]=1;
+		
+		if(sr>=0) sum[3]=2; else sum[3]=1;
+		var t=Math.abs(Math.round(sl*220*l+34));
+		sum[1]=Math.round(t/2);sum[2]=(t-sum[1]);
+		t=Math.abs(Math.round(sr*220*l+34));
+		sum[4]=Math.round(t/2);sum[5]=(t-sum[4])%128;
+		if(sum[2]==128) sum[2]=127;
+		if(sum[4]==128) sum[4]=127;
+		sum[6]=0
+		
+		for(var i=0;i<6;i++)
+			sum[6]^=Math.abs(sum[i]);
+		sum[6]|=1;
+		resul="";
+		for(var i=0;i<7;i++)
+			resul+=String.fromCharCode((sum[i]));
+		//fromCharCode(128)由于是非assic所有会变成2个字节。所有要拆开。
+		//console.log(sum); 
+		if(resul.length!=7)
+		alert(resul); 
+		out.print("mm"+resul); 
+		out.flush();
+		
+		msg.innerHTML=sum;  
+		} 
+	}
+		function closeTCP()
+		{
+			socket.close();
+			socket=null;
+		}
+		function printname(i,o)
+		{
+		    for(var a in o){  
+		        if(typeof o[a] == "object") { 
+		        	var k="  -";
+		        	while(k.length<i)
+		        		k+="  -";
+		        	msg.innerText+=k +a+":"
+		            printname(i+1,o[a]); 
+		        } 
+		        else
+		        {
+		        	var k="  -";
+		        	while(k.length<i)
+		        		k+="  -";
+		        	msg.innerText+=k +a+"\n";
+		        }
+		    }  
+		    return o;  
+		} 
+		
+	//njsAlertForAndroid();
+	
+</script>
+</body>
+</html>
